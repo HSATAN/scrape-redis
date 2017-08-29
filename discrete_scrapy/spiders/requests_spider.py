@@ -26,6 +26,7 @@ class MZhanSpider(BaseSpider):
 
     def __init__(self):
         self.r = Redis()
+        self.f = open('sound_url.txt', 'a')
 
     def start_requests(self):
         if not is_login():
@@ -106,4 +107,9 @@ class MZhanSpider(BaseSpider):
 
                 url = 'http://www.missevan.com/sound/getsoundlike?type=7&sound_id=%s' % sound_id
                 print url
-                self.r.sadd('mzhan:start_urls', url)
+                #self.r.sadd('mzhan:soundurl', url)
+                if url+'\n' not in self.f:
+                    self.f.writelines(url+'\n')
+
+    def close(spider, reason):
+        spider.f.close()
