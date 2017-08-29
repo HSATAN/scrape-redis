@@ -26,7 +26,7 @@ class MZhanSpider(BaseSpider):
 
     def __init__(self):
         self.r = Redis()
-        self.f = open('sound_url.txt', 'a')
+        self.f = open('sound_url', 'a')
 
     def start_requests(self):
         if not is_login():
