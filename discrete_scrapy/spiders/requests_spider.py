@@ -10,8 +10,6 @@ import time
 import  requests,json
 from redis import Redis
 
-tt = Redis()
-tt.sadd('test','fdsfdsfdsf','huagnkaijie')
 
 class MZhanSpider(BaseSpider):
 
@@ -26,7 +24,7 @@ class MZhanSpider(BaseSpider):
 
     def __init__(self):
         self.r = Redis()
-        self.f = open('sound_url', 'a')
+        self.f = open('sound_url.txt', 'w+')
 
     def start_requests(self):
         if not is_login():

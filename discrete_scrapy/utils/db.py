@@ -2,16 +2,19 @@
 import psycopg2
 import logging
 
-HOST = '47.93.5.189'
+# HOST = '47.93.5.189'
+# HOST = 'localhost'
+HOST = '172.16.10.133'
 PORT = '5432'
-DATABASE = 'mzhan'
+DATABASE = 'peiwo_bi'
 USER = 'huangkaijie'
-PASSWORD = 'raybo'
+USER = 'peiwo_bi'
+PASSWORD = 'raybo123'
 
 
 class BaseDB(object):
 
-    def __init__(self, database='mzhan',port='5432'):
+    def __init__(self, database='peiwo_bi',port='5432'):
         self.conn = psycopg2.connect(database=database, password=PASSWORD, user=USER, host=HOST, port=port)
         self.cur = self.conn.cursor()
 
