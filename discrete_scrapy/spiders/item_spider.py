@@ -50,11 +50,13 @@ class ItemSpider(RedisSpider, BaseSpider):
                 metadata['album_create_user_id'] = albums_create_user_id
                 metadata['album_cover_image'] = albums_cover_image
             m = copy.deepcopy(metadata)
+            print sound_url
             yield scrapy.Request(url=sound_url,
                                  meta={"audiodata": m},
                                  callback=self.parse_audio_user,
                                  errback=self.handle_error,
-                                 priority=10
+                                 priority=9,
+                                 dont_filter=True
                                  )
     def parse_audio_user(self,response):
         metadata = response.meta['audiodata']
@@ -90,7 +92,7 @@ class ItemSpider(RedisSpider, BaseSpider):
         try:
             upper_introduce = user['intro']
             upper_introduce = re.sub('<(.*?)>', '', upper_introduce, re.S)
-            metadata['upper_introduce'] = upper_introduce
+            metadata['upper_introduce'] = upper_introduce.replace("'", '"')
         except Exception as e:
             print e
         try:
@@ -111,7 +113,7 @@ class ItemSpider(RedisSpider, BaseSpider):
         try:
             audio_introduce = sound['intro']
             audio_introduce = re.sub('<(.*?)>', '', audio_introduce, re.S)
-            metadata['audio_introduce'] = audio_introduce
+            metadata['audio_introduce'] = audio_introduce.replace("'",'"')
         except Exception as e:
             print e
         try:
@@ -185,6 +187,23 @@ class ItemSpider(RedisSpider, BaseSpider):
         item['touch_time'] = format_date
         for key, value in metadata.items():
             item[key] = value
+        sound_id = response.url.split('=')[-1]
+        yield scrapy.Request(url='http://www.missevan.com/sound/getimages?soundid=%s' % sound_id,
+                             callback=self.parse_image,
+                             errback=self.handle_error,
+                             meta={"item": item},
+                             dont_filter=True,
+                             priority=10
+                             )
+
+    def parse_image(self,response):
+
+        item = response.meta['item']
+        data = response.text
+        if data:
+            data = json.loads(data)
+            images = data['successVal']['images']
+            item['images'] = images
         yield item
 
 
